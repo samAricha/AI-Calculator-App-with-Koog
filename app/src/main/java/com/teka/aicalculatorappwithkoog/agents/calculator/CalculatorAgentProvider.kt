@@ -9,7 +9,9 @@ import ai.koog.agents.core.environment.ReceivedToolResult
 import ai.koog.agents.core.tools.ToolRegistry
 import ai.koog.agents.features.eventHandler.feature.handleEvents
 import ai.koog.prompt.dsl.prompt
+import ai.koog.prompt.executor.clients.google.GoogleModels
 import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleGoogleAIExecutor
 import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
 import com.teka.aicalculatorappwithkoog.agents.common.AgentProvider
 import com.teka.aicalculatorappwithkoog.agents.common.ExitTool
@@ -28,10 +30,9 @@ object CalculatorAgentProvider : AgentProvider {
         onErrorEvent: suspend (String) -> Unit,
         onAssistantMessage: suspend (String) -> String,
     ): AIAgent<String, String> {
-        val openAiToken = "appSettings.getCurrentSettings().openAiToken"
-        require(openAiToken.isNotEmpty()) { "OpenAI token is not configured." }
 
-        val executor = simpleOpenAIExecutor(openAiToken)
+//        val executor2 = simpleOpenAIExecutor(openAiToken)
+        val executor = simpleGoogleAIExecutor("AIzaSyBgFpJb3cZ0lN7MI2y2-iqPjIsefasLRts")
 
         // Create tool registry with calculator tools
         val toolRegistry = ToolRegistry {
@@ -110,7 +111,7 @@ object CalculatorAgentProvider : AgentProvider {
                     """.trimIndent()
                 )
             },
-            model = OpenAIModels.Chat.GPT4o,
+            model = GoogleModels.Gemini2_0Flash,
             maxAgentIterations = 50
         )
 
