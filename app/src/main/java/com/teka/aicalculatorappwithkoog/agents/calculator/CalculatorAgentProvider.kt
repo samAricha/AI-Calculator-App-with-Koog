@@ -13,6 +13,7 @@ import ai.koog.prompt.executor.clients.google.GoogleModels
 import ai.koog.prompt.executor.clients.openai.OpenAIModels
 import ai.koog.prompt.executor.llms.all.simpleGoogleAIExecutor
 import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+import com.teka.aicalculatorappwithkoog.BuildConfig
 import com.teka.aicalculatorappwithkoog.agents.common.AgentProvider
 import com.teka.aicalculatorappwithkoog.agents.common.ExitTool
 
@@ -25,14 +26,14 @@ object CalculatorAgentProvider : AgentProvider {
     override val description: String = "Hi, I'm a calculator agent, I can do math"
 
     override suspend fun provideAgent(
-//        appSettings: AppSettings,
         onToolCallEvent: suspend (String) -> Unit,
         onErrorEvent: suspend (String) -> Unit,
         onAssistantMessage: suspend (String) -> String,
     ): AIAgent<String, String> {
 
-//        val executor2 = simpleOpenAIExecutor(openAiToken)
-        val executor = simpleGoogleAIExecutor("AIzaSyBgFpJb3cZ0lN7MI2y2-iqPjIsefasLRts")
+        val apiKey = BuildConfig.GEMINI_API_KEY
+
+        val executor = simpleGoogleAIExecutor(apiKey)
 
         // Create tool registry with calculator tools
         val toolRegistry = ToolRegistry {
