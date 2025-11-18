@@ -1,17 +1,21 @@
 package com.teka.aicalculatorappwithkoog
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
+import com.teka.aicalculatorappwithkoog.agent.CalculatorAgentProvider
+import com.teka.aicalculatorappwithkoog.screens.AgentDemoScreen
+import com.teka.aicalculatorappwithkoog.screens.AgentDemoViewModel
 import com.teka.aicalculatorappwithkoog.ui.theme.AICalculatorAppWithKoogTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,11 +23,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AICalculatorAppWithKoogTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
+                    CalcScreen()
                 }
             }
         }
@@ -31,17 +32,24 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun CalcScreen() {
+        val context = LocalContext.current
+        val provider = CalculatorAgentProvider
+        val viewModel = viewModel<AgentDemoViewModel>(
+            factory = object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                    return AgentDemoViewModel(
+                        application = context.applicationContext as Application,
+                        agentProvider = provider
+                    ) as T
+                }
+            }
+        )
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AICalculatorAppWithKoogTheme {
-        Greeting("Android")
-    }
+        AgentDemoScreen(
+            viewModel = viewModel,
+            onNavigateBack = {},
+        )
+
 }
